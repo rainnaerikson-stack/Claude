@@ -5,7 +5,7 @@ The output file must be named [ProductName]_Overview.pdf and saved in the
 [ProductName]/ folder alongside the screenshots you captured.
 
 COPY THE CODE ARCHITECTURE EXACTLY from:
-  /Users/rainna.erikson/Desktop/Claude/Competitive Agents/NoRedInk/generate_noredink_pdf.py
+  NoRedInk_Expert_Report.md
 
 Do not deviate from the structure below. This is a strict template.
 
