@@ -175,22 +175,36 @@ COMPETITIVE MODE — required sections (in order)
     • Screenshots inline
     • UNLIKE/UNIQUE callouts
 
-  AI [FEATURE NAME]
-    • Description paragraph
-    • UNLIKE NEWSELA callout about AI approach
-    • Screenshots of the AI feature
-    • Data table if applicable
-    • UNIQUE callout for any differentiating capability
+  
+  AI [FEATURE NAME]  — or —  NO AI
+    ┌ If the product HAS AI features:
+    │   • Description paragraph (what the AI does, how it works)
+    │   • UNLIKE NEWSELA callout about AI approach
+    │   • Max 2 screenshots of the AI feature in action
+    │   • Comparison table if the feature has measurable dimensions
+    │   • UNIQUE callout for any differentiating capability
+    │
+    └ If the product has NO AI (confirmed after testing all areas):
+        • Replace this section with a short "NO AI" section header
+        • 1 paragraph stating what was tested and that nothing was found
+        • 1 UNLIKE NEWSELA callout on the competitive implication
+        • DO NOT generate a comparison table listing every missing feature —
+          this adds length without insight. The absence of AI is one fact, not ten.
 
   LIVE AI TEST FINDINGS ([Month Year])
-    • Opening paragraph: "Two essays were submitted to probe [AI feature]…"
-    • For each test:
-      - label_style header: "Test N — Input: [description]"
-      - Body paragraph describing the input
-      - side_by_side screenshots (input + output)
-      - label_style: "Finding N — [Title]: [subtitle]"
-      - Comparison table if applicable
-      - UNIQUE or UNLIKE callout per key finding
+    ┌ If the product HAS AI: include this section.
+    │   • Opening paragraph: "Two essays were submitted to probe [AI feature]…"
+    │   • For each test:
+    │     - label_style header: "Test N — Input: [description]"
+    │     - Body paragraph describing the input
+    │     - side_by_side screenshots (input + output)
+    │     - label_style: "Finding N — [Title]: [subtitle]"
+    │     - Comparison table if applicable
+    │     - UNIQUE or UNLIKE callout per key finding
+    │
+    └ If the product has NO AI: OMIT THIS SECTION ENTIRELY.
+        The "NO AI" section above is sufficient. Do not create a table
+        listing each product area and "No AI found" — this wastes a full page.
 
   ADDITIONAL FEATURES (capabilities with no Newsela equivalent)
     • UNIQUE callout at top
