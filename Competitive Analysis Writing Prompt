@@ -1,0 +1,210 @@
+Competitive Intelligence Report — PDF Generation Prompt
+
+You are generating a competitive intelligence PDF for [PRODUCT NAME] using ReportLab.
+The output file must be named [ProductName]_Overview.pdf and saved in the 
+[ProductName]/ folder alongside the screenshots you captured.
+
+COPY THE CODE ARCHITECTURE EXACTLY from:
+  /Users/rainna.erikson/Desktop/Claude/Competitive Agents/NoRedInk/generate_noredink_pdf.py
+
+Do not deviate from the structure below. This is a strict template.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. COLOR PALETTE — REQUIRED RULES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Define two brand colors:
+  BRAND_DARK  = the product's primary dark color (used for section banners, title)
+  BRAND_ACCENT = the product's highlight/action color (used for HR line, label_style,
+                 title_sub_style, callout accent bar)
+
+WCAG 4.5:1 CONTRAST IS MANDATORY on all text. Before writing styles:
+  - Compute luminance for every text/background pair using the sRGB formula
+  - If BRAND_ACCENT on white < 4.5:1, define BRAND_TEXT = a darker shade that passes,
+    and use BRAND_TEXT for ALL text; reserve BRAND_ACCENT for decorative elements only
+    (HR lines, table backgrounds, left-bar accents, colored circles)
+  - Never use a color for text that you haven't verified passes 4.5:1
+
+Required neutral colors (use these exact hex values):
+  LTGRAY = #F4F6F8   MGRAY  = #D0D5DD   DKGRAY = #344054
+  CGRAY  = #667085   AMBER  = #FFF8E1
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2. PARAGRAPH STYLES — REQUIRED NAMES AND SPECS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Define all of these — do not rename or omit any:
+
+  body_style       Helvetica 9.5pt DKGRAY TA_JUSTIFY leading=14 spaceAfter=6
+  bullet_style     Helvetica 9.5pt DKGRAY TA_LEFT    leading=14 leftIndent=12 spaceAfter=4
+  label_style      Helvetica-Bold 8.5pt BRAND_ACCENT (verify 4.5:1) TA_LEFT leading=13 spaceBefore=8 spaceAfter=3
+  caption_style    Helvetica-Oblique 8pt CGRAY TA_CENTER leading=11 spaceAfter=6
+  footer_style     Helvetica 7.5pt CGRAY TA_CENTER leading=10
+  title_main_style Helvetica-Bold 22pt BRAND_DARK leading=26 spaceAfter=4
+  title_sub_style  Helvetica 10pt BRAND_ACCENT (verify 4.5:1) leading=14 spaceAfter=6
+  th_style         Helvetica-Bold 9pt WHITE TA_LEFT leading=12   ← used in ALL table headers
+  td_style         Helvetica 9pt DKGRAY TA_LEFT leading=12
+  td_bold_style    Helvetica-Bold 9pt DKGRAY TA_LEFT leading=12
+  td_center_style  Helvetica 9pt DKGRAY TA_CENTER leading=12
+  snap_label_style Helvetica-Bold 9pt WHITE TA_LEFT leading=12   ← snapshot table col 0 only
+
+  W = 6.3 * inch   (usable width — do NOT change this)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+3. REQUIRED HELPER FUNCTIONS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Implement all three helpers before build():
+
+section_header(title)
+  Returns a full-width Table with BRAND_DARK background and white 11pt bold text.
+  Padding: top/bottom=6, left/right=8. No grid lines.
+
+callout(text, label="UNLIKE NEWSELA")
+  Returns an amber callout box with a colored left accent bar (0.12in wide).
+  - label starts with "▌" for UNLIKE, "★" for UNIQUE
+  - Label text is 8pt bold BRAND_ACCENT (verify 4.5:1 on AMBER background)
+  - Body text is 8.5pt DKGRAY on AMBER
+  - Left accent bar background = BRAND_ACCENT for UNIQUE, RED (#C0392B) for UNLIKE
+  - Wrap in KeepTogether([Spacer(1,6), callout, Spacer(1,6)])
+
+side_by_side(img1, caption1, img2, caption2, h=2.5*inch)
+  Returns a 2-column Table with each column = W/2. Each cell contains an Image
+  (width=W/2 - 0.1in, height=h) followed by a caption in caption_style.
+  If an image file is missing, show only the caption. No borders.
+
+img_full(filename, caption_text, h=3.5*inch)
+  Returns a centered full-width image with caption below in caption_style.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+4. PAGE LAYOUT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SimpleDocTemplate with letter pagesize.
+  leftMargin=rightMargin=0.85in   topMargin=bottomMargin=0.75in
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+5. REQUIRED DOCUMENT STRUCTURE (in order)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Every report must contain these sections in this order.
+Section names are descriptive, not numbered.
+
+  TITLE BLOCK
+    • Product name in title_main_style
+    • One-line descriptor in title_sub_style  
+      format: "[Tagline] · Product Overview · [Month Year]"
+    • HRFlowable width=W thickness=1.5 color=BRAND_ACCENT spaceAfter=10
+
+  WHAT IT IS
+    • 2–4 sentence paragraph in body_style
+    • 2-column snapshot table (colWidths=[1.6in, 4.7in]):
+      - Header row: uses th_style in BOTH columns on BRAND_DARK background
+      - Col 0 data cells: snap_label_style (white bold) — BRAND_DARK background applied
+        via TableStyle BACKGROUND command per row in a loop
+      - Col 1 data cells: td_style — alternating white/LTGRAY backgrounds
+      - Rows: URL, AI Feature, Grades, Free Tier, Pricing, Login options, Key stats
+        (add/remove rows as appropriate for the product)
+    • 1–2 screenshots (side_by_side or img_full)
+    • 1 callout box (UNLIKE or UNIQUE as appropriate)
+
+  HOW IT WORKS  
+    • subsection labels in label_style (no section_header banner)
+    • bullet lists in bullet_style
+    • screenshots inline after each subsection they illustrate
+    • callout boxes (UNLIKE/UNIQUE) after any finding that differentiates from Newsela Writing
+
+
+ HOW IT MATCHES UP (side by side comparisons with Newsela Writing)
+    • subsection labels in label_style (no section_header banner)
+    • bullet lists in bullet_style
+    • screenshots inline after each subsection they illustrate
+    • callout boxes (UNLIKE/UNIQUE) after any finding that differentiates from Newsela Writing
+
+  AI [FEATURE NAME]  (e.g. "AI GRADING ASSISTANT" or "AI WRITING COACH")
+    • Description paragraph
+    • UNLIKE NEWSELA callout about feedback timing
+    • Screenshot(s) of the AI feature
+    • Data table if applicable (rubric criteria, category breakdown, etc.)
+    • UNIQUE callout for any differentiating capability
+
+  LIVE AI TEST FINDINGS (Month Year)
+    • "Two essays were submitted to probe [AI feature] scoring…" opening paragraph
+    • For each test:
+      - label_style subsection header: "Test N — Input: [description]"
+      - Body paragraph describing the input
+      - side_by_side screenshots (input + output)
+      - Findings labeled in label_style: "Finding N — [Title]: [subtitle]"
+      - Comparison table if applicable (colWidths proportional, BRAND_DARK header row)
+      - UNIQUE or UNLIKE callout for each key finding
+
+  ADDITIONAL FEATURES (add any features that do not overlap Newsela Writing)
+    • UNIQUE callout at top of section
+    • subsection labels for additional features
+    • bullet lists for each feature
+    • screenshots inline
+
+  FREE VS. PREMIUM  (or FREE MODEL if fully free)
+    • UNLIKE NEWSELA callout at top
+    • Free/Premium feature comparison table or bullet lists
+      - Table: colWidths=[3.0in, 1.5in, 1.5in], BRAND_DARK header row
+      - Use ✓ / ✗ / "Limited" for availability cells
+
+  KEY STRENGTHS
+    • Bullets in bullet_style
+    • Each bullet: "<b>Strength name</b> — explanation"
+    • Use label_style color inline via <font color="..."> tag for strength names
+
+  KNOWN LIMITATIONS
+    • Bullets in bullet_style  
+    • Each bullet: "<b>Limitation name</b> — explanation"
+    • Always include AI calibration findings from live testing
+
+  FOOTER (last element in story)
+    • HRFlowable width=W thickness=0.5 color=MGRAY spaceAfter=6
+    • "Competitive Intelligence Report · [Product Name] · [Date] · Prepared by Claude (Competitive Agent)"
+      in footer_style
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+6. SCREENSHOT RULES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+• Screenshots appear INLINE, immediately after the content they illustrate
+• Never put all screenshots at the end
+• Use side_by_side() for pairs. Use img_full() for single full-width screenshots
+• Every image must have a descriptive italic caption below it
+• If a screenshot file is missing, still render the caption as a placeholder
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+7. CALLOUT BOX RULES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+• Every section must contain at least one callout box
+• "UNLIKE NEWSELA" = red left bar — use when Newsela Writing does something better 
+  or fundamentally differently
+• "UNIQUE TO [PRODUCT NAME]" = BRAND_ACCENT left bar — use when the product has a 
+  capability Newsela Writing lacks entirely
+• Callout body text must be specific and evidence-based — never vague
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+8. TABLE RULES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ALL tables must follow this pattern:
+  • Header row: BRAND_DARK background, all cells use th_style (white bold text)
+  • Data rows: alternating white / LTGRAY backgrounds
+  • GRID: 0.4pt MGRAY on all cells
+  • Padding: top/bottom=4–5, left/right=6–7
+  • VALIGN TOP on all cells
+  • Column 0 of snapshot table: BRAND_DARK background every row, snap_label_style text
+    (this must be set at the Paragraph level — TableStyle TEXTCOLOR alone will NOT work)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+9. FINAL CHECKS BEFORE WRITING ANY CODE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+□ Every text color passes WCAG 4.5:1 against its background — calculate, don't guess
+□ No textColor=BRAND_ACCENT unless contrast is verified
+□ snap_label_style used (not td_bold_style) in snapshot table column 0
+□ All screenshots placed inline, not at the end
+□ At least one callout box per section
+□ UNIQUE callouts use "UNIQUE TO [PRODUCT NAME]:" prefix
+□ UNLIKE callouts use "UNLIKE NEWSELA:" prefix
+□ Footer is the last element in story[]
+□ Script runs with: python3 generate_[ProductName]_pdf.py
+□ Output path: [ProductName]/[ProductName]_Overview.pdf
+The two failure modes from the KhanAcademy report are directly addressed:
+
+Dark text on dark background — explicitly required: "this must be set at the Paragraph level — TableStyle TEXTCOLOR alone will NOT work"
+Missing callout boxes — required at minimum once per section, with exact label formats specified
