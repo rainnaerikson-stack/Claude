@@ -8,6 +8,17 @@
   3. Do not deviate from the section structure, helper signatures, or color palette
   4. Do not add additional content in order to add page count. If the report ends up being shorter, that is okay. 
 
+## Research Discipline (NON-NEGOTIABLE)
+
+These rules exist because past sessions produced reports with factual errors traceable to skipping screens and assuming features were absent. Follow them on every run.
+
+- **Build a coverage checklist before clicking anywhere.** Enumerate every screen, dropdown, modal, settings panel, and primary workflow you plan to visit. Surface that checklist to the user so they can flag gaps. Check each item off only when you have actually verified it in the live app.
+- **Complete every primary user workflow end-to-end.** For a teacher product that means assignment creation through Publish (every step, every field), the student-side experience (use "Preview as student" or equivalent — do not skip this), the full grading flow including AI feedback, and any analytics/reporting surfaces. Do not begin writing the report until every primary workflow has been walked.
+- **Tag every claim VERIFIED or ASSUMED before drafting.** VERIFIED means you observed it directly in the app this session. ASSUMED means you inferred it from absence of contrary evidence, from a marketing page, or from a competitor's behavior. Surface the ASSUMED list to the user and resolve every item before writing.
+- **Use AskUserQuestion liberally during research, not just at setup.** Any time you are tempted to assume — about scope, about a feature's behavior, about whether something exists — ask the user instead. Cheap to ask, expensive to be wrong.
+- **Never make a "does not have X" claim without positive verification.** If you did not explicitly look for X and fail to find it, weaken the claim or omit it. The most common error mode is asserting absence from incomplete exploration.
+- **Slow down at the verify-and-write boundary.** Re-read the draft report against your notes and the live app before declaring done. A regex audit of the generator script is not a substitute for a re-read against ground truth.
+
 ## Accessibility — WCAG 2.1 AA Color Contrast (NON-NEGOTIABLE)
 
 All generated documents (PDFs, reports, HTML) MUST meet WCAG 2.1 AA minimum contrast ratios **before** writing or running any code. Do not produce a first draft and fix it after feedback.
